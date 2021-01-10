@@ -10,11 +10,19 @@ use Lcobucci\JWT\Validation\Constraint\IssuedBy;
 use Lcobucci\JWT\Validation\Constraint\PermittedFor;
 use Lcobucci\JWT\Validation\Constraint\RelatedTo;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
+use Lcobucci\JWT\Validation\Constraint\ValidAt;
+use Lcobucci\Clock\Clock;
+use Lcobucci\Clock\FrozenClock;
+use DateTimeImmutable;
 
 class QueubiousMiddleware
 {
+    protected Clock $clock;
+
     public function handle($request, Closure $next)
     {
+        $this->clock = new FrozenClock(new DateTimeImmutable());
+
         $config = Configuration::forSymmetricSigner(
             new Sha256(),
             InMemory::base64Encoded(config('queubious.secret'))
@@ -35,7 +43,8 @@ class QueubiousMiddleware
             new IssuedBy(config('queubious.url')),
             new PermittedFor(config('app.url')),
             new RelatedTo('queue-egress'),
-            new SignedWith($config->signer(), $config->signingKey())
+            new SignedWith($config->signer(), $config->signingKey()),
+            new ValidAt($this->clock)
         );
 
         $constraints = $config->validationConstraints();
@@ -45,6 +54,8 @@ class QueubiousMiddleware
             $response = $request;
             return $next($response)->withCookie($cookie);
         }
+
+        dd('failed');
 
         return redirect(config('queubious.url'));
     }
