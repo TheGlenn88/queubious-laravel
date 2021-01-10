@@ -1,0 +1,57 @@
+{
+  "name": "theglenn88/queubious-laravel",
+  "description": "Laravel middleware package for the Queubious queueing system",
+  "keywords": [
+    "queubious",
+    "queue",
+    "waiting-room"
+  ],
+  "license": "MIT",
+  "support": {
+    "issues": "https://github.com/theglenn88/queubious-laravel/issues",
+    "source": "https://github.com/theglenn88/queubious-laravel"
+  },
+  "authors": [
+    {
+      "name": "Mike Glenn",
+      "email": "mike.glenn@me.com"
+    }
+  ],
+  "require": {
+    "php": "^7.2|^8.0",
+    "illuminate/contracts": "^6.9|^7.0|^8.0",
+    "illuminate/database": "^6.9|^7.0|^8.0",
+    "illuminate/support": "^6.9|^7.0|^8.0",
+    "lcobucci/jwt": "^4.0"
+  },
+  "require-dev": {
+    "mockery/mockery": "^1.0",
+    "phpunit/phpunit": "^8.0|^9.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Queubious\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Queubious\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "2.x-dev"
+    },
+    "laravel": {
+      "providers": [
+        "Queubious\\QueubiousServiceProvider"
+      ]
+    }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
+
