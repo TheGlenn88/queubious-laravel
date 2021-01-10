@@ -4,7 +4,6 @@ namespace Queubious\Http\Middleware;
 
 use Closure;
 use Lcobucci\JWT\Configuration;
-use Lcobucci\JWT\Token\Plain;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
