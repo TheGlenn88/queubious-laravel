@@ -41,19 +41,12 @@ class QueubiousMiddleware
 
         $constraints = $config->validationConstraints();
 
-        try {
-            $config->validator()->assert($token, ...$constraints);
-        } catch (RequiredConstraintsViolated $e) {
-            // list of constraints violation exceptions:
-            dd($e->violations());
-        }
-
         if ($config->validator()->validate($token, ...$constraints)) {
             $cookie = \Cookie::make('queue_token', $token->toString(), 20, '/');
             $response = $request;
             return $next($response)->withCookie($cookie);
         }
-        dd('here');
+
         return redirect(config('queubious.url'));
     }
 }
