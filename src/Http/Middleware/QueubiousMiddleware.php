@@ -28,15 +28,18 @@ class QueubiousMiddleware
             InMemory::base64Encoded(config('queubious.secret'))
         );
 
-        if (!$request->input('token') && !$request->cookie('queue_token')) {
+        if (
+            !$request->input('queubioustoken') &&
+            !$request->cookie('queubioustoken')
+        ) {
             return redirect(config('queubious.url'));
         }
         $token = $config
             ->parser()
             ->parse(
-                $request->cookie('queue_token')
-                    ? $request->cookie('queue_token')
-                    : $request->input('token')
+                $request->cookie('queubioustoken')
+                    ? $request->cookie('queubioustoken')
+                    : $request->input('queubioustoken')
             );
 
         $config->setValidationConstraints(
@@ -50,12 +53,27 @@ class QueubiousMiddleware
         $constraints = $config->validationConstraints();
 
         if ($config->validator()->validate($token, ...$constraints)) {
-            $cookie = \Cookie::make('queue_token', $token->toString(), 20, '/');
-            $response = $request;
-            return $next($response)->withCookie($cookie);
-        }
+            $cookie = \Cookie::make(
+                'queubioustoken',
+                $token->toString(),
+                $token->claims()->get('cexp'),
+                '/',
+                null,
+                false,
+                false
+            );
 
-        dd('failed');
+            $response = $next($request);
+
+            if ($request->input('queubioustoken')) {
+                return $response
+                    ->withCookie($cookie)
+                    ->header('Location', \URL::current())
+                    ->setStatusCode(302);
+            }
+
+            return $response->withCookie($cookie);
+        }
 
         return redirect(config('queubious.url'));
     }
